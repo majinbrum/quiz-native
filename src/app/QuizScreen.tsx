@@ -4,6 +4,7 @@ import QuestionCard from "../components/QuestionCard";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 import questions from "../questions";
+import Card from "../components/Card";
 const question = questions[0];
 
 export default function QuizScreen() {
@@ -16,10 +17,17 @@ export default function QuizScreen() {
 				</View>
 
 				{/* Body */}
-				<View>
-					<QuestionCard question={question} />
-					<Text style={styles.time}>20 sec</Text>
-				</View>
+				{question ? (
+					<View>
+						<QuestionCard question={question} />
+						<Text style={styles.time}>20 sec</Text>
+					</View>
+				) : (
+					<Card title='Well done'>
+						<Text>Correct answers: 3/5</Text>
+						<Text>Best score: 10</Text>
+					</Card>
+				)}
 
 				{/* Footer */}
 				<Pressable
