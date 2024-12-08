@@ -2,16 +2,14 @@ import { View } from "react-native";
 import AnswerOption from "./AnswerOption";
 import { Question } from "../types";
 import Card from "./Card";
+import { useState } from "react";
 
 type QuestionCard = {
 	question: Question;
 };
 
 export default function QuestionCard({ question }: QuestionCard) {
-	const selectedOption = question.options[0];
-	const onOptionSelected = (option: string) => {
-		console.warn("Selected: ", option);
-	};
+	const [selectedOption, setSelectedOption] = useState<string>();
 
 	return (
 		<Card title={question.title}>
@@ -21,7 +19,7 @@ export default function QuestionCard({ question }: QuestionCard) {
 						key={option}
 						option={option}
 						isSelected={option === selectedOption}
-						onPress={() => onOptionSelected(option)}
+						onPress={() => setSelectedOption(option)}
 					/>
 				))}
 			</View>
