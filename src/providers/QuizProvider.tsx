@@ -1,6 +1,7 @@
 import { PropsWithChildren, useContext, useEffect, useState, createContext } from "react";
 import questions from "../questions";
 import { Question } from "../types";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type QuizContext = {
 	question?: Question;
@@ -32,9 +33,15 @@ export default function QuizProvider({ children }: PropsWithChildren) {
 	const isFinished = questionIndex >= questions.length;
 
 	useEffect(() => {
+		loadBestScore();
+	}, []);
+
+	useEffect(() => {
 		// check if there is a new best score
 		if (isFinished === true && score > bestScore) {
 			setBestScore(score);
+			// we pass the score as parameter otherwise it wouldn't pass the updated state
+			saveBestScore(score);
 		}
 	}, [isFinished]);
 
@@ -57,6 +64,26 @@ export default function QuizProvider({ children }: PropsWithChildren) {
 
 		// update function that will not depend on the actual state but will use the current value
 		setQuestionIndex((currValue) => currValue + 1);
+	};
+
+	const saveBestScore = async (score: number) => {
+		try {
+			await AsyncStorage.setItem("best-score", score.toString());
+		} catch (error) {
+			// saving error
+		}
+	};
+
+	const loadBestScore = async () => {
+		try {
+			const value = await AsyncStorage.getItem("best-score");
+			if (value !== null) {
+				// value previously stored
+				setBestScore(Number.parseInt(value));
+			}
+		} catch (error) {
+			// error reading value
+		}
 	};
 
 	return <QuizContext.Provider value={{ question, questionIndex, onNext, selectedOption, setSelectedOption, score, totalQuestions: questions.length, bestScore }}>{children}</QuizContext.Provider>;
