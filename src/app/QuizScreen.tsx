@@ -1,28 +1,23 @@
-import { Text, View, StyleSheet, Pressable } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import QuestionCard from "../components/QuestionCard";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
-import questions from "../questions";
 import Card from "../components/Card";
 import CustomButton from "../components/CustomButton";
-import { useState } from "react";
+import { useQuizContext } from "../providers/QuizProvider";
 
 export default function QuizScreen() {
-	const [questionIndex, setQuestionIndex] = useState(0);
-	const question = questions[questionIndex];
-
-	const onNext = () => {
-		// update function that will not depend on the actual state but will use the current value
-		setQuestionIndex((currValue) => currValue + 1);
-	};
+	const { question, questionIndex, onNext, score, totalQuestions } = useQuizContext();
 
 	return (
 		<SafeAreaView style={styles.page}>
 			<View style={styles.container}>
 				{/* Header */}
 				<View>
-					<Text style={styles.title}>Question {questionIndex}/5</Text>
+					<Text style={styles.title}>
+						Question {questionIndex + 1}/{totalQuestions}
+					</Text>
 				</View>
 
 				{/* Body */}
@@ -33,7 +28,9 @@ export default function QuizScreen() {
 					</View>
 				) : (
 					<Card title='Well done'>
-						<Text>Correct answers: 3/5</Text>
+						<Text>
+							Correct answers: {score}/{totalQuestions}
+						</Text>
 						<Text>Best score: 10</Text>
 					</Card>
 				)}
