@@ -17,10 +17,12 @@ export default function QuizScreen() {
 	const { time, startTimer, clearTimer } = useTimer(20);
 
 	useEffect(() => {
-		startTimer();
-		return () => {
-			clearTimer();
-		};
+		if (questionIndex + 1 <= totalQuestions) {
+			startTimer();
+			return () => {
+				clearTimer();
+			};
+		}
 	}, [question]);
 
 	useEffect(() => {
@@ -35,7 +37,7 @@ export default function QuizScreen() {
 				{/* Header */}
 				<View>
 					<Text style={styles.title}>
-						Question {questionIndex + 1}/{totalQuestions}
+						Question {questionIndex + 1 <= totalQuestions ? questionIndex + 1 : totalQuestions}/{totalQuestions}
 					</Text>
 				</View>
 
@@ -64,17 +66,24 @@ export default function QuizScreen() {
 				)}
 
 				{/* Footer */}
-				<CustomButton
-					title='Next'
-					rightIcon={
-						<FontAwesome6
-							name='arrow-right-long'
-							size={16}
-							color='white'
-						/>
-					}
-					onPress={onNext}
-				/>
+				{question ? (
+					<CustomButton
+						title='Next'
+						rightIcon={
+							<FontAwesome6
+								name='arrow-right-long'
+								size={16}
+								color='white'
+							/>
+						}
+						onPress={onNext}
+					/>
+				) : (
+					<CustomButton
+						title='Restart'
+						onPress={onNext}
+					/>
+				)}
 			</View>
 		</SafeAreaView>
 	);
