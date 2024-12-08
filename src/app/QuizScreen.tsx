@@ -6,9 +6,32 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Card from "../components/Card";
 import CustomButton from "../components/CustomButton";
 import { useQuizContext } from "../providers/QuizProvider";
+import { useEffect, useState } from "react";
 
 export default function QuizScreen() {
-	const { question, questionIndex, onNext, score, totalQuestions } = useQuizContext();
+	const { question, questionIndex, onNext, score, totalQuestions, bestScore } = useQuizContext();
+	const [time, setTime] = useState(20);
+
+	useEffect(() => {
+		// restart countdown when question changes
+		setTime(20);
+
+		// start countdown
+		const interval = setInterval(() => {
+			setTime((t) => t - 1);
+		}, 1000);
+
+		// clear interval before going to the next question
+		return () => {
+			clearInterval(interval);
+		};
+	}, [question]);
+
+	useEffect(() => {
+		if (time <= 0) {
+			onNext();
+		}
+	}, [time]);
 
 	return (
 		<SafeAreaView style={styles.page}>
@@ -24,14 +47,14 @@ export default function QuizScreen() {
 				{question ? (
 					<View>
 						<QuestionCard question={question} />
-						<Text style={styles.time}>20 sec</Text>
+						<Text style={styles.time}>{time} sec</Text>
 					</View>
 				) : (
 					<Card title='Well done'>
 						<Text>
 							Correct answers: {score}/{totalQuestions}
 						</Text>
-						<Text>Best score: 10</Text>
+						<Text>Best score: {bestScore}</Text>
 					</Card>
 				)}
 
